@@ -1,9 +1,12 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.2
+// @version      0.3
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
+// @updateURL    https://github.com/kaba99/animach-funny-translate/raw/master/animach-funny-translate.user.js
+// @downloadURL  https://github.com/kaba99/animach-funny-translate/raw/master/animach-funny-translate.user.js
+// @supportURL   https://github.com/kaba99/animach-funny-translate/
 // @include      http://tehtube.tv/*
 // @include      https://tehtube.tv/*
 // @include      http://tehtube.tv/r/*
