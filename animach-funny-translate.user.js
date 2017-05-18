@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.1.1
+// @version      0.2
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
 // @include      http://tehtube.tv/*
@@ -113,7 +113,14 @@
         return promise.then(function (r) {
             return r.json();
         }).then(function(data) {
-            return (data[0] && data[0][0] && data[0][0][0]) ? data[0][0][0] : '';
+            if (sourceLang == 'auto') {
+                return (data[0] && data[0][0] && data[0][0][0] && data[0][0][0][0]) ? data[0][0][0][0] : '';
+            } else {
+                return (data[0] && data[0][0] && data[0][0][0]) ? data[0][0][0] : '';
+            }
+        }).catch(function () {
+            alert('Невозможно перевести текст');
+            return text;
         });
     }
     
@@ -137,8 +144,8 @@
         }
         
         if (isScriptActive) {            
-            translateText(msgParts[msgParts.length - 1], 'ru', 'zh-CN').then(function(translatedText) {
-                return translateText(translatedText, 'zh-CN', 'ru');
+            translateText(msgParts[msgParts.length - 1], 'auto', 'ja').then(function(translatedText) {
+                return (translatedText == msgParts[msgParts.length - 1]) ? translatedText : translateText(translatedText, 'ja', 'ru');
             }).then(function(morphedText) {
                 msgParts[msgParts.length - 1] = morphedText;
                 
@@ -156,10 +163,8 @@
     }
     
     
-    
-
-    window.addEventListener('load', function() {
+    $(window).load(function() {
         replaceMessageSendStuff();
         initControlBtn();
-    }, false);
+    });
 })();
