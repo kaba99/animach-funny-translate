@@ -20,7 +20,6 @@
         $("#chatline").off('keydown').keydown(function(ev) {
             // Enter/return
             if(ev.keyCode == 13) {
-                console.log('Enter/return 1');
                 if (CHATTHROTTLE) {
                     return;
                 }
@@ -106,7 +105,6 @@
         return promise.then(function (r) {
             return r.json();
         }).then(function(data) {
-            console.log(data);
             return (data[0] && data[0][0] && data[0][0][0]) ? data[0][0][0] : '';
         });
     }
@@ -125,18 +123,25 @@
     }
     
     function sendMessage(msg, meta) {
-        if (isScriptActive) {
-            translateText(msg, 'ru', 'zh-CN').then(function(translatedText) {
+        let msgParts = msg.split(':');
+        if (msgParts.length == 0) {
+            return;
+        }
+        
+        if (isScriptActive) {            
+            translateText(msgParts[msgParts.length - 1], 'ru', 'zh-CN').then(function(translatedText) {
                 return translateText(translatedText, 'zh-CN', 'ru');
             }).then(function(morphedText) {
+                msgParts[msgParts.length - 1] = morphedText;
+                
                 socket.emit("chatMsg", {
-                    msg: morphedText,
+                    msg: msgParts.join(':'),
                     meta: meta
                 });
             });
         } else {
             socket.emit("chatMsg", {
-                msg: msg,
+                msg: msgParts.join(':'),
                 meta: meta
             });
         }
