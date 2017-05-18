@@ -1,9 +1,17 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.1
+// @version      0.1.1
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
+// @include      http://tehtube.tv/*
+// @include      https://tehtube.tv/*
+// @include      http://tehtube.tv/r/*
+// @include      https://tehtube.tv/r/*
+// @include      http://*/r/animach
+// @include      https://*/r/animach
+// @match        https://cytu.be/r/anime_2chtv
+// @match        http://cytu.be/r/anime_2chtv
 // @match        http://tehtube.tv/
 // @match        https://tehtube.tv/
 // @match        http://tehtube.tv/r/animach
@@ -149,7 +157,9 @@
     
     
     
-    
-    replaceMessageSendStuff();
-    initControlBtn();
+
+    window.addEventListener('load', function() {
+        replaceMessageSendStuff();
+        initControlBtn();
+    }, false);
 })();
