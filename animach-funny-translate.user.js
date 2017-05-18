@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.4.1
+// @version      0.4.2
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
 // @updateURL    https://github.com/kaba99/animach-funny-translate/raw/master/animach-funny-translate.user.js
@@ -111,7 +111,9 @@
             return Promise.resolve('');
         }
         
-        let promise = fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sourceLang + '&tl=' + targetLang + '&dt=t&q=' + text, {});
+        let promise = fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sourceLang + '&tl=' + targetLang + '&dt=t&q=' + text, {
+            redirect: 'follow'
+        });
         
         return promise.then(function (r) {
             return r.json();
