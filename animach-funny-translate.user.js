@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.5
+// @version      0.6
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
 // @updateURL    https://github.com/kaba99/animach-funny-translate/raw/master/animach-funny-translate.user.js
@@ -26,14 +26,12 @@
     'use strict';
     
     function ControlBtn(options) {
-        this.options = Object.assign({
-            defaultStatus: 'off',
-            statuses: [{title: 'Выкл', value: 'off', actions: []}]
-        }, options);
+        let that = this;
+        this.options = {};
+        this.options.defaultStatus = options.defaultStatus || 'off';
+        this.options.statuses = options.statuses || [{title: 'Выкл', value: 'off', actions: []}];
         
         let replaceMessageSendStuff = function () {
-            let that = this;
-            
             $("#chatline").off('keydown').keydown(function(ev) {
                 // Enter/return
                 if(ev.keyCode == 13) {
@@ -108,20 +106,20 @@
                     }
                 });
             }
-        }.bind(this);
+        };
         
         
         this.findStatus = function(statusValue) {
             let statusObject = null;
 
-            for (let n in this.options.statuses) {
-                if (this.options.statuses[n].value == statusValue) {
-                    statusObject = this.options.statuses[n];
+            for (let n in that.options.statuses) {
+                if (that.options.statuses[n].value == statusValue) {
+                    statusObject = that.options.statuses[n];
                 }
             }
 
             return statusObject;
-        }.bind(this);
+        };
         
         
         this.translateText = function(text, sourceLang, targetLang) {
@@ -129,13 +127,17 @@
                 return Promise.resolve({text: text});
             }
 
-            let promise = fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sourceLang + '&tl=' + targetLang + '&dt=t&q=' + text, {
-                redirect: 'follow'
+            let promise = new Promise(function(resolve, reject) {
+                $.getJSON('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sourceLang + '&tl=' + targetLang + '&dt=t&q=' + text)
+                    .done(function (data) {
+                        resolve(data);
+                    })
+                    .fail(function (error) {
+                        reject(error);
+                    });
             });
 
-            return promise.then(function (r) {
-                return r.json();
-            }).then(function(data) {
+            return promise.then(function(data) {
                 if ((data[0] && data[0][0] && data[0][0][0])) {
                     return {text: data[0][0][0]};
                 } else {
@@ -156,7 +158,7 @@
             
             let msgParts = msg.split(':');
             let morphedText = msgParts[msgParts.length - 1];
-            let actions = this.findStatus(this.getStatus()).actions || [];
+            let actions = that.findStatus(that.getStatus()).actions || [];
             
             let chain = Promise.resolve();
             for(let n = 0, actionsLen = actions.length; n < actionsLen; n++) {
@@ -164,14 +166,14 @@
                 let targetLang = actions[n];
                 
                 chain = chain.then(function () {
-                    return this.translateText(morphedText, sourceLang, targetLang).then(function (translatedData) {
+                    return that.translateText(morphedText, sourceLang, targetLang).then(function (translatedData) {
                         if (translatedData.error) {
                             alert(translatedData.error);
                         }
                         
                         morphedText = translatedData.text;
                     });
-                }.bind(this));
+                });
             }
             
             chain.then(function () {
@@ -182,27 +184,25 @@
                     meta: meta
                 });
             });
-        }.bind(this);
+        };
         
         
         let initGUI = function () {
-            let that = this;
-            
-            this.$wrapper = $('<div class="btn-group">').appendTo('#leftcontrols .btn-group');
-            this.$btn = $('<button type="button" class="btn btn-sm btn-default glyphicon glyphicon-flag dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="btn-title"></span>&nbsp;<span class="caret"></span></button>').appendTo(this.$wrapper);
-            this.$btnTitle = this.$btn.find('.btn-title');
-            this.$list = $('<ul class="dropdown-menu"></ul>').appendTo(this.$wrapper);
-            this.$listItems = this.options.statuses.map(function (item) {
+            that.$wrapper = $('<div class="btn-group">').appendTo('#leftcontrols .btn-group');
+            that.$btn = $('<button type="button" class="btn btn-sm btn-default glyphicon glyphicon-flag dropdown-toggle" data-toggle="dropdown">&nbsp;<span class="btn-title"></span>&nbsp;<span class="caret"></span></button>').appendTo(that.$wrapper);
+            that.$btnTitle = that.$btn.find('.btn-title');
+            that.$list = $('<ul class="dropdown-menu"></ul>').appendTo(that.$wrapper);
+            that.$listItems = that.options.statuses.map(function (item) {
                 return $('<li><a href="#" data-value="' + item.value + '">' + item.title + '</a></li>').appendTo(that.$list);
             });
             
-            this.$list.on('click', 'a', function (e) {
+            that.$list.on('click', 'a', function (e) {
                 e.preventDefault();
                 that.setStatus($(this).data('value'));
             });
             
-            this.setStatus(this.getStatus());
-        }.bind(this);
+            that.setStatus(that.getStatus());
+        };
         
         
         this.init = function () {
@@ -212,14 +212,14 @@
         
         
         this.setStatus = function (status) {
-            let statusObject = this.findStatus(status) || this.findStatus(this.options.defaultStatus);
-            this._status = statusObject.value;
-            this.$btnTitle.text(statusObject.title);
+            let statusObject = that.findStatus(status) || that.findStatus(that.options.defaultStatus);
+            that._status = statusObject.value;
+            that.$btnTitle.text(statusObject.title);
             
-        }.bind(this);
+        };
         
         this.getStatus = function () {
-            return this._status || this.options.defaultStatus;
+            return that._status || that.options.defaultStatus;
         };
     }
     
