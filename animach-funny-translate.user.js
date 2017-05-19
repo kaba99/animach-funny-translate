@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Funny translate
 // @namespace    KabaNamespace
-// @version      0.6
+// @version      0.6.1
 // @description  Переводит текст при отправке сообщения на китайский и обратно. Кнопка включения этого режима находится в одном ряду с другими кнопками под чатом.
 // @author       Kaba
 // @updateURL    https://github.com/kaba99/animach-funny-translate/raw/master/animach-funny-translate.user.js
@@ -229,12 +229,14 @@
             defaultStatus: 'off',
             statuses: [
                 {title: 'Выкл', value: 'off', actions: []},
-                {title: '->En', value: 'en', actions: ['en']},
-                {title: '->Ua', value: 'ua', actions: ['uk']},
-                {title: '->Chi->Ru', value: 'chi-ru', actions: ['zh-CN', 'ru']},
-                {title: '->Chi', value: 'chi', actions: ['zh-CN']},
-                {title: '->Ja', value: 'ja', actions: ['ja']},
-                {title: '->Ja->Ru', value: 'ja-ru', actions: ['ja', 'ru']}
+                {title: 'Belarus', value: 'be', actions: ['be']},
+                {title: 'Ua', value: 'ua', actions: ['uk']},
+                {title: 'En', value: 'en', actions: ['en']},
+                {title: 'Bulgarian', value: 'bg', actions: ['bg']},
+                {title: 'Chi->Ru', value: 'chi-ru', actions: ['zh-CN', 'ru']},
+                {title: 'Chi', value: 'chi', actions: ['zh-CN']},
+                {title: 'Ja', value: 'ja', actions: ['ja']},
+                {title: 'Ja->Ru', value: 'ja-ru', actions: ['ja', 'ru']}
             ]
         });
         window.controlBtnExtra.init();
